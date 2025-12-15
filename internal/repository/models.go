@@ -9,16 +9,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Item struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Value int32     `json:"value"`
-}
-
-type Player struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	Score     pgtype.Int4      `json:"score"`
+type Book struct {
+	ID     uuid.UUID      `json:"id"`
+	Name   string         `json:"name"`
+	Author string         `json:"author"`
+	Price  pgtype.Numeric `json:"price"`
 }

@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"math/big"
 	"os"
 
 	"github.com/SomeSuperCoder/sqlclearning/internal/repository"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func main() {
@@ -20,17 +21,23 @@ func main() {
 	defer conn.Close(ctx)
 
 	repo := repository.New(conn)
-	players, _ := repo.FindAllPlayers(ctx)
-
-	log.Println(players)
-
-	item, err := repo.InsertItem(ctx, repository.InsertItemParams{
-		Name:  "Diamond",
-		Value: 1000,
+	value, err := repo.InsertBook(ctx, repository.InsertBookParams{
+		Name:   "Some book",
+		Author: "Some Author",
+		Price: pgtype.Numeric{
+			Int:   big.NewInt(123123),
+			Exp:   0,
+			Valid: true,
+		},
 	})
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(value)
 
-	fmt.Println(item)
+	books, err := repo.FindAllBooks(ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(books)
 }

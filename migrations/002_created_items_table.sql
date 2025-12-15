@@ -1,7 +1,0 @@
-CREATE TABLE items (
-  id UUID PRIMARY KEY,
-  name VARCHAR NOT NULL,
-  value INT NOT NULL
-);
-
-CREATE UNIQUE INDEX ON items(name);
