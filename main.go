@@ -3,12 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/big"
 	"os"
 
 	"github.com/SomeSuperCoder/sqlclearning/internal/repository"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func main() {
@@ -21,19 +19,19 @@ func main() {
 	defer conn.Close(ctx)
 
 	repo := repository.New(conn)
-	value, err := repo.InsertBook(ctx, repository.InsertBookParams{
-		Name:   "Some book",
-		Author: "Some Author",
-		Price: pgtype.Numeric{
-			Int:   big.NewInt(123123),
-			Exp:   0,
-			Valid: true,
-		},
-	})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(value)
+	// value, err := repo.InsertBook(ctx, repository.InsertBookParams{
+	// Name:   "Some book",
+	// Author: "Some Author",
+	// Price: pgtype.Numeric{
+	// Int:   big.NewInt(123123),
+	// Exp:   0,
+	// Valid: true,
+	// },
+	// })
+	// if err != nil {
+	// panic(err)
+	// }
+	// fmt.Println(value)
 
 	books, err := repo.FindAllBooks(ctx)
 	if err != nil {
