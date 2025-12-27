@@ -1,5 +1,5 @@
 -- name: FindAllBooks :many
-SELECT * FROM books;
+SELECT * FROM books ORDER BY created_at DESC;
 
 -- name: InsertBook :one
 INSERT INTO books (

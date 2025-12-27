@@ -13,7 +13,7 @@ import (
 )
 
 const findAllBooks = `-- name: FindAllBooks :many
-SELECT id, name, author, price FROM books
+SELECT id, name, author, price, created_at FROM books ORDER BY created_at DESC
 `
 
 func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
@@ -30,6 +30,7 @@ func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
 			&i.Name,
 			&i.Author,
 			&i.Price,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -54,7 +55,7 @@ VALUES (
   $2,
   $3
 )
-RETURNING id, name, author, price
+RETURNING id, name, author, price, created_at
 `
 
 type InsertBookParams struct {
@@ -71,6 +72,7 @@ func (q *Queries) InsertBook(ctx context.Context, arg InsertBookParams) (Book, e
 		&i.Name,
 		&i.Author,
 		&i.Price,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -82,7 +84,7 @@ set
   author = COALESCE($3, author),
   price = COALESCE($4, price)
 where id = $1
-returning id, name, author, price
+returning id, name, author, price, created_at
 `
 
 type UpdateBookParams struct {
@@ -105,6 +107,7 @@ func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, e
 		&i.Name,
 		&i.Author,
 		&i.Price,
+		&i.CreatedAt,
 	)
 	return i, err
 }

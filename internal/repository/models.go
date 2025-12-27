@@ -10,8 +10,9 @@ import (
 )
 
 type Book struct {
-	ID     uuid.UUID      `json:"id"`
-	Name   string         `json:"name"`
-	Author string         `json:"author"`
-	Price  pgtype.Numeric `json:"price"`
+	ID        uuid.UUID        `json:"id"`
+	Name      string           `json:"name"`
+	Author    string           `json:"author"`
+	Price     pgtype.Numeric   `json:"price"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
 }
