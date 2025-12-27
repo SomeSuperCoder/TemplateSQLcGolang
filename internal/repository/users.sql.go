@@ -52,3 +52,27 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (InsertU
 	)
 	return i, err
 }
+
+const updateProfile = `-- name: UpdateProfile :one
+UPDATE users SET
+  name = COALESCE($1, name)
+WHERE id = $2
+RETURNING name, 1 as _dummy
+`
+
+type UpdateProfileParams struct {
+	Name *string   `json:"name"`
+	ID   uuid.UUID `json:"id"`
+}
+
+type UpdateProfileRow struct {
+	Name  string `json:"name"`
+	Dummy int32  `json:"_dummy"`
+}
+
+func (q *Queries) UpdateProfile(ctx context.Context, arg UpdateProfileParams) (UpdateProfileRow, error) {
+	row := q.db.QueryRow(ctx, updateProfile, arg.Name, arg.ID)
+	var i UpdateProfileRow
+	err := row.Scan(&i.Name, &i.Dummy)
+	return i, err
+}

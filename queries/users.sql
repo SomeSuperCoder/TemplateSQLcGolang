@@ -15,3 +15,7 @@ INSERT INTO users (
 ;
 
 -- name: UpdateProfile :one
+UPDATE users SET
+  name = COALESCE(sqlc.narg('name'), name)
+WHERE id = sqlc.arg('id')
+RETURNING name, 1 as _dummy;

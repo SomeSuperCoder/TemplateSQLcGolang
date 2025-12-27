@@ -19,3 +19,13 @@ func (s *UsersService) Insert(r *http.Request, args *repository.InsertUserParams
 
 	return nil
 }
+
+func (s *UsersService) UpdateProfile(r *http.Request, args *repository.UpdateProfileParams, reply *repository.UpdateProfileRow) error {
+	profile, err := s.Repo.UpdateProfile(r.Context(), *args)
+	if err != nil {
+		return err
+	}
+	*reply = profile
+
+	return nil
+}
