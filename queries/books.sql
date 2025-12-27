@@ -3,13 +3,11 @@ SELECT * FROM books ORDER BY created_at DESC;
 
 -- name: InsertBook :one
 INSERT INTO books (
-  id,
   name,
   author,
   price
 )
 VALUES (
-  uuid_generate_v4(),
   $1,
   $2,
   $3
