@@ -8,6 +8,7 @@ package repository
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -41,8 +42,18 @@ func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
 }
 
 const insertBook = `-- name: InsertBook :one
-INSERT INTO books (id, name, author, price)
-VALUES (uuid_generate_v4(), $1, $2, $3)
+INSERT INTO books (
+  id,
+  name,
+  author,
+  price
+)
+VALUES (
+  uuid_generate_v4(),
+  $1,
+  $2,
+  $3
+)
 RETURNING id, name, author, price
 `
 
@@ -54,6 +65,40 @@ type InsertBookParams struct {
 
 func (q *Queries) InsertBook(ctx context.Context, arg InsertBookParams) (Book, error) {
 	row := q.db.QueryRow(ctx, insertBook, arg.Name, arg.Author, arg.Price)
+	var i Book
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Author,
+		&i.Price,
+	)
+	return i, err
+}
+
+const updateBook = `-- name: UpdateBook :one
+update books
+set
+  name = COALESCE($2, name),
+  author = COALESCE($3, author),
+  price = COALESCE($4, price)
+where id = $1
+returning id, name, author, price
+`
+
+type UpdateBookParams struct {
+	ID     uuid.UUID      `json:"id"`
+	Name   string         `json:"name"`
+	Author string         `json:"author"`
+	Price  pgtype.Numeric `json:"price"`
+}
+
+func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, error) {
+	row := q.db.QueryRow(ctx, updateBook,
+		arg.ID,
+		arg.Name,
+		arg.Author,
+		arg.Price,
+	)
 	var i Book
 	err := row.Scan(
 		&i.ID,
