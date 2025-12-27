@@ -16,3 +16,11 @@ type Book struct {
 	Price     pgtype.Numeric   `json:"price"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
 }
+
+type User struct {
+	ID        uuid.UUID        `json:"id"`
+	Name      string           `json:"name"`
+	Email     string           `json:"email"`
+	Password  string           `json:"password"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+}

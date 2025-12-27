@@ -16,12 +16,12 @@ type Reply struct {
 
 type MathService struct{}
 
-func (m *MathService) Add(r *http.Request, args *Args, reply *Reply) error {
+func (s *MathService) Add(r *http.Request, args *Args, reply *Reply) error {
 	reply.Result = args.A + args.B
 	return nil
 }
 
-func (m *MathService) Divide(r *http.Request, args *Args, reply *Reply) error {
+func (s *MathService) Divide(r *http.Request, args *Args, reply *Reply) error {
 	if args.B == 0 {
 		return fmt.Errorf("division by zero")
 	}

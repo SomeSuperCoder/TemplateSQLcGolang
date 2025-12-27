@@ -17,8 +17,8 @@ RETURNING *;
 -- name: UpdateBook :one
 UPDATE books
 SET
-  name = COALESCE($2, name),
-  author = COALESCE($3, author),
-  price = COALESCE($4, price)
-WHERE id = $1
+  name = COALESCE(sqlc.narg('name'), name),
+  author = COALESCE(sqlc.narg('author'), author),
+  price = COALESCE(sqlc.narg('price'), price)
+WHERE id = sqlc.arg('id')
 RETURNING *;

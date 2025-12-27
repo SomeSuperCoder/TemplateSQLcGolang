@@ -35,6 +35,9 @@ func main() {
 	bookService := &rpcservices.BookService{Repo: repo}
 	s.RegisterService(bookService, "Book")
 
+	userService := &rpcservices.UsersService{Repo: repo}
+	s.RegisterService(userService, "User")
+
 	http.Handle("/rpc", s)
 
 	log.Printf("RPC started and is listening on :%v", port)

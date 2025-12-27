@@ -22,7 +22,7 @@ func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Book
+	items := []Book{}
 	for rows.Next() {
 		var i Book
 		if err := rows.Scan(
@@ -44,13 +44,11 @@ func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
 
 const insertBook = `-- name: InsertBook :one
 INSERT INTO books (
-  id,
   name,
   author,
   price
 )
 VALUES (
-  uuid_generate_v4(),
   $1,
   $2,
   $3
@@ -78,28 +76,28 @@ func (q *Queries) InsertBook(ctx context.Context, arg InsertBookParams) (Book, e
 }
 
 const updateBook = `-- name: UpdateBook :one
-update books
-set
-  name = COALESCE($2, name),
-  author = COALESCE($3, author),
-  price = COALESCE($4, price)
-where id = $1
-returning id, name, author, price, created_at
+UPDATE books
+SET
+  name = COALESCE($1, name),
+  author = COALESCE($2, author),
+  price = COALESCE($3, price)
+WHERE id = $4
+RETURNING id, name, author, price, created_at
 `
 
 type UpdateBookParams struct {
-	ID     uuid.UUID      `json:"id"`
-	Name   string         `json:"name"`
-	Author string         `json:"author"`
+	Name   *string        `json:"name"`
+	Author *string        `json:"author"`
 	Price  pgtype.Numeric `json:"price"`
+	ID     uuid.UUID      `json:"id"`
 }
 
 func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, error) {
 	row := q.db.QueryRow(ctx, updateBook,
-		arg.ID,
 		arg.Name,
 		arg.Author,
 		arg.Price,
+		arg.ID,
 	)
 	var i Book
 	err := row.Scan(
