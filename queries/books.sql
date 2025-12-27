@@ -15,10 +15,10 @@ VALUES (
 RETURNING *;
 
 -- name: UpdateBook :one
-update books
-set
+UPDATE books
+SET
   name = COALESCE($2, name),
   author = COALESCE($3, author),
   price = COALESCE($4, price)
-where id = $1
-returning *;
+WHERE id = $1
+RETURNING *;
