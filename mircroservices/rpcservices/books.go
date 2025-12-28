@@ -39,3 +39,13 @@ func (s *BookService) Update(r *http.Request, args *repository.UpdateBookParams,
 
 	return nil
 }
+
+func (s *BookService) Like(r *http.Request, args *repository.LikeParams, reply *repository.LikeRow) error {
+	likes, err := s.Repo.Like(r.Context(), *args)
+	if err != nil {
+		return err
+	}
+	*reply = likes
+
+	return nil
+}

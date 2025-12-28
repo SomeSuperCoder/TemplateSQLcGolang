@@ -22,3 +22,11 @@ SET
   price = COALESCE(sqlc.narg('price'), price)
 WHERE id = sqlc.arg('id')
 RETURNING *;
+
+-- name: Like :one
+UPDATE books
+SET
+  likes = likes + 1
+WHERE id = $1
+    AND (@dummy::boolean IS NULL OR true)
+RETURNING likes, 1 as _dummy;

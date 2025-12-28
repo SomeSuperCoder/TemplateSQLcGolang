@@ -15,6 +15,7 @@ type Book struct {
 	Author    string           `json:"author"`
 	Price     pgtype.Numeric   `json:"price"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
+	Likes     int64            `json:"likes"`
 }
 
 type User struct {

@@ -13,7 +13,7 @@ import (
 )
 
 const findAllBooks = `-- name: FindAllBooks :many
-SELECT id, name, author, price, created_at FROM books ORDER BY created_at DESC
+SELECT id, name, author, price, created_at, likes FROM books ORDER BY created_at DESC
 `
 
 func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
@@ -31,6 +31,7 @@ func (q *Queries) FindAllBooks(ctx context.Context) ([]Book, error) {
 			&i.Author,
 			&i.Price,
 			&i.CreatedAt,
+			&i.Likes,
 		); err != nil {
 			return nil, err
 		}
@@ -53,7 +54,7 @@ VALUES (
   $2,
   $3
 )
-RETURNING id, name, author, price, created_at
+RETURNING id, name, author, price, created_at, likes
 `
 
 type InsertBookParams struct {
@@ -71,7 +72,34 @@ func (q *Queries) InsertBook(ctx context.Context, arg InsertBookParams) (Book, e
 		&i.Author,
 		&i.Price,
 		&i.CreatedAt,
+		&i.Likes,
 	)
+	return i, err
+}
+
+const like = `-- name: Like :one
+UPDATE books
+SET
+  likes = likes + 1
+WHERE id = $1
+    AND ($2::boolean IS NULL OR true)
+RETURNING likes, 1 as _dummy
+`
+
+type LikeParams struct {
+	ID    uuid.UUID `json:"id"`
+	Dummy bool      `json:"dummy"`
+}
+
+type LikeRow struct {
+	Likes int64 `json:"likes"`
+	Dummy int32 `json:"_dummy"`
+}
+
+func (q *Queries) Like(ctx context.Context, arg LikeParams) (LikeRow, error) {
+	row := q.db.QueryRow(ctx, like, arg.ID, arg.Dummy)
+	var i LikeRow
+	err := row.Scan(&i.Likes, &i.Dummy)
 	return i, err
 }
 
@@ -82,7 +110,7 @@ SET
   author = COALESCE($2, author),
   price = COALESCE($3, price)
 WHERE id = $4
-RETURNING id, name, author, price, created_at
+RETURNING id, name, author, price, created_at, likes
 `
 
 type UpdateBookParams struct {
@@ -106,6 +134,7 @@ func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, e
 		&i.Author,
 		&i.Price,
 		&i.CreatedAt,
+		&i.Likes,
 	)
 	return i, err
 }
